@@ -18,6 +18,7 @@ ansible/*.retry
 .venv
 .env
 build/
+*.lock
 
 # Unit test / coverage reports
 .coverage
