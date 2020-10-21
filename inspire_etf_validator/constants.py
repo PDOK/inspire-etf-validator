@@ -1,5 +1,8 @@
 INSPIRE_ETF_ENDPOINT = "localhost:8080"
 
+# In seconds is 3 days
+CACHE_EXPIRATION = 86400
+
 TEST_ENDPOINTS = [ {
       "protocol" : "OGC:WFS",
       "metadataStandardVersion" : "Nederlands metadata profiel op ISO 19119 voor services 2.0",

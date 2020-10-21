@@ -23,4 +23,4 @@ def main():
 
     #todo: Als alles klaar is spuw een samenvatting uit
 
-    raise NotImplementedError
+    print('test')
