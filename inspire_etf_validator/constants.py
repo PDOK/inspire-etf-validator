@@ -1,7 +1,14 @@
-INSPIRE_ETF_ENDPOINT = "localhost:8080"
+INSPIRE_ETF_ENDPOINT = "http://localhost:8080/validator"
+INSPIRE_ETF_API_VERSION = 'v2'
 
 # In seconds is 3 days
 CACHE_EXPIRATION = 86400
+
+TEST_ID_LIST = {
+    "atom": "EID11571c92-3940-4f42-a6cd-5e2b1c6f4d93",
+    "wms": "EIDeec9d674-d94b-4d8d-b744-1309c6cae1d2",
+    "wfs": "EIDed2d3501-d700-4ff9-b9bf-070dece8ddbd",
+}
 
 TEST_ENDPOINTS = [ {
       "protocol" : "OGC:WFS",

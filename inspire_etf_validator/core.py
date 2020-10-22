@@ -1,5 +1,6 @@
 import logging
 
+from inspire_etf_validator.domain.dao_etf_validator import test
 
 logger = logging.getLogger(__name__)
 
@@ -23,4 +24,4 @@ def main():
 
     #todo: Als alles klaar is spuw een samenvatting uit
 
-    print('test')
+    test()
