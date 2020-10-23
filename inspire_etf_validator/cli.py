@@ -20,13 +20,14 @@ def cli():
 
 
 @cli.command(name="inspire_etf_validator")
+@click.option('--enable-caching', is_flag=True, default=False)
 @click_log.simple_verbosity_option(logger)
-def inspire_etf_validator_command():
+def inspire_etf_validator_command(enable_caching):
     """
     TODO Docstring.
     """
     try:
-        main()
+        main(enable_caching)
     except AppError:
         logger.exception("inspire_etf_validator failed:")
         sys.exit(1)

@@ -1,13 +1,15 @@
 import logging
 
+from inspire_etf_validator.domain.dao_ngr import get_all_ngr_records, get_filtered_ngr_records
 
 logger = logging.getLogger(__name__)
 
 
-def main():
-    """TODO Docstring."""
-
-    #todo: haal lijst op van alle services als die ouder is dan x aantal dagen -> cachsing inbouwen
+def main(enable_caching):
+    all_ngr_records = get_all_ngr_records(enable_caching)
+    atom_records = get_filtered_ngr_records(all_ngr_records, 'ATOM')
+    wms_records = get_filtered_ngr_records(all_ngr_records, 'WMS')
+    wfs_records = get_filtered_ngr_records(all_ngr_records, 'WFS')
 
     #todo: Run voor elke service de validaties:
 
