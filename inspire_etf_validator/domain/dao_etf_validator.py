@@ -1,3 +1,5 @@
+import json
+
 import requests
 from urllib.parse import urljoin
 
@@ -43,7 +45,7 @@ def start_test(label, type, service_endpoint):
     response = requests.post(endpoint, json=body)
 
     if response.status_code != 201:
-        raise Exception(f"Something went wrong starting the test, we got {response.status_code} HTTP status:\n {response}")
+        raise Exception(f"Something went wrong starting the test, we got HTTP status {response.status_code}:\n {response.content}")
 
     return response
 
@@ -55,9 +57,28 @@ def __get_test_id(type):
 
     return TEST_ID_LIST[type]
 
-def check_status():
-    endpoint = __endpoint('status')
+
+def is_status_complete(test_id):
+    endpoint = __endpoint(f"TestRuns/{test_id}/progress")
+    response = requests.get(endpoint)
+
+    if response.status_code != 200:
+        raise Exception(
+            f"Something went wrong checking the status of test `{test_id}`, we got HTTP status {response.status_code}:\n {response.content}")
+
+    result = json.loads(response.content)
+
+    return result['val'] == result['max']
 
 
-def get_result():
-    endpoint = __endpoint('status')
+def get_result(test_id):
+    endpoint = __endpoint(f"TestRuns/{test_id}")
+    response = requests.get(endpoint)
+
+    if response.status_code != 200:
+        raise Exception(
+            f"Something went wrong retrieving the result of test `{test_id}`, we got HTTP status {response.status_code}:\n {response.content}")
+
+    result = json.loads(response.content)
+
+    return result
