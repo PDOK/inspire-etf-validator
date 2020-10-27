@@ -17,14 +17,6 @@ def __fix_url(url):
     return url.rstrip('/') + '/'
 
 
-def test():
-    endpoint = __endpoint('status')
-
-    x = requests.get(endpoint)
-
-    print(x.text)
-
-
 def start_test(label, type, service_endpoint):
     endpoint = __endpoint('TestRuns')
 
@@ -47,7 +39,9 @@ def start_test(label, type, service_endpoint):
     if response.status_code != 201:
         raise Exception(f"Something went wrong starting the test, we got HTTP status {response.status_code}:\n {response.content}")
 
-    return response
+    result = json.loads(response.content)
+
+    return result
 
 
 def __get_test_id(type):
@@ -66,6 +60,7 @@ def is_status_complete(test_id):
         raise Exception(
             f"Something went wrong checking the status of test `{test_id}`, we got HTTP status {response.status_code}:\n {response.content}")
 
+    print(response.content)
     result = json.loads(response.content)
 
     return result['val'] == result['max']
@@ -82,3 +77,30 @@ def get_result(test_id):
     result = json.loads(response.content)
 
     return result
+
+
+def get_log(test_id):
+    endpoint = __endpoint(f"TestRuns/{test_id}/log")
+    response = requests.get(endpoint)
+
+    if response.status_code != 200:
+        raise Exception(
+            f"Something went wrong retrieving the log of test `{test_id}`, we got HTTP status {response.status_code}:\n {response.content}")
+
+    return response.content
+
+
+def get_html_report(test_id):
+    endpoint = __endpoint(f"TestRuns/{test_id}.html?download=false")
+    response = requests.get(endpoint)
+
+    if response.status_code != 200 and response.status_code != 202:
+        raise Exception(
+            f"Something went wrong retrieving the html report of test `{test_id}`, we got HTTP status {response.status_code}:\n {response.content}")
+
+    return response.content
+
+
+def get_testrun_id(test_result):
+    return test_result["EtfItemCollection"]["testRuns"]["TestRun"]["id"]
+

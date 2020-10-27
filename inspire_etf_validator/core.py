@@ -1,6 +1,8 @@
 import logging
 
-from inspire_etf_validator.domain.dao_etf_validator import test
+from inspire_etf_validator.constants import TEST_ENDPOINTS
+from inspire_etf_validator.domain import dao_etf_validator
+from inspire_etf_validator.runner import run_master_sync
 
 logger = logging.getLogger(__name__)
 
@@ -24,4 +26,4 @@ def main():
 
     #todo: Als alles klaar is spuw een samenvatting uit
 
-    test()
+    run_master_sync.run_master(TEST_ENDPOINTS)
