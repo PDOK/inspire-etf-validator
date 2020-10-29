@@ -104,3 +104,6 @@ def get_html_report(test_id):
 def get_testrun_id(test_result):
     return test_result["EtfItemCollection"]["testRuns"]["TestRun"]["id"]
 
+
+def get_testrun_status(test_result):
+    return test_result["EtfItemCollection"]["testRuns"]["TestRun"]["status"]
