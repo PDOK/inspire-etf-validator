@@ -1,4 +1,5 @@
-INSPIRE_ETF_ENDPOINT = "http://localhost:8080/validator"
+#INSPIRE_ETF_ENDPOINT = "http://localhost:8080/validator"
+INSPIRE_ETF_ENDPOINT = "https://inspire.ec.europa.eu/validator"
 INSPIRE_ETF_API_VERSION = 'v2'
 
 SLEEP_TIME_IN_SECONDS = 5

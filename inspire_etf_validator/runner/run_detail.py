@@ -74,4 +74,4 @@ def run_detail(result_path, endpoint_info, start_time_master):
     result["test_endpoint"] = endpoint
     result["test_label"] = label
     result["test_service_type"] = service_type
-    return result
+    return result, test_result

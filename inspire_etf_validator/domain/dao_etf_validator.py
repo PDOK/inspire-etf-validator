@@ -1,4 +1,5 @@
 import json
+import re
 
 import requests
 from urllib.parse import urljoin
@@ -107,3 +108,19 @@ def get_testrun_id(test_result):
 
 def get_testrun_status(test_result):
     return test_result["EtfItemCollection"]["testRuns"]["TestRun"]["status"]
+
+
+def get_inspire_etf_eu_version(test_result):
+    # Notice -> this way we get the inspire etf version mentioned on the EU github page dynamically (in a hacky way)
+    # Source: https://github.com/inspire-eu-validation/community/releases
+
+    version = "?"
+
+    try:
+        url = test_result["EtfItemCollection"]["referencedItems"]["translationTemplateBundles"]["TranslationTemplateBundle"]["source"]
+        reg = re.search(r"ets-repository-([1-9]\d\d\d\.?\d?\d?)", url)
+        version = reg.group(1)
+    except (KeyError, AttributeError, IndexError, TypeError):
+        print("could not find inspire etf eu version")
+
+    return version
