@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 def main(result_path, enable_caching):
 
     all_ngr_records = get_all_ngr_records(enable_caching)
-    result = run_master_sync.run_master(result_path, all_ngr_records[0:9])
+    result = run_master_sync.run_master(result_path, all_ngr_records[0:2])
     # result = run_master_sync.run_master(result_path, all_ngr_records)
 
     master_result_path = join(result_path, result["result_path"])

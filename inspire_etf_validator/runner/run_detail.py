@@ -53,7 +53,7 @@ def run_detail(result_path, endpoint_info, start_time_master):
         write_test_detail_file(result_path, start_time_master, test_id, "test_report", file_name, "html", test_html_report)
 
     except:
-        error = sys.exc_info()
+        error = str(sys.exc_info())
         result["error"] = error
         print(error)
 
