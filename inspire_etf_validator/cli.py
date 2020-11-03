@@ -14,6 +14,13 @@ from inspire_etf_validator.core import main, generate_report
 from inspire_etf_validator.error import AppError
 
 
+def set_level(only_set_package_loglevel=True):
+    loggers = [logging.getLogger(name) for name in logging.root.manager.loggerDict]
+    for logger_ in loggers:
+        logger_.setLevel(logger.level)
+    logging.info("Set loglevels to %s.", logging.getLevelName(logger.level))
+
+
 @click.group()
 def cli():
     pass
@@ -39,6 +46,8 @@ def inspire_etf_validator_command(result_path, enable_caching):
     """
     TODO Docstring.
     """
+    set_level()
+
     try:
         main(result_path, enable_caching)
     except AppError:
@@ -62,6 +71,7 @@ def inspire_etf_validator_command(result_path, enable_caching):
 )
 @click_log.simple_verbosity_option(logger)
 def generate_report_command(result_path):
+    set_level()
     try:
         generate_report(result_path)
     except AppError:

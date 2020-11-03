@@ -37,6 +37,7 @@ def start_test(label, type, service_endpoint):
     response = requests.post(endpoint, json=body)
 
     if response.status_code != 201:
+        # todo: specefieke exception gebruiken
         raise Exception(f"Something went wrong starting the test, we got HTTP status {response.status_code}:\n {response.content}")
 
     result = json.loads(response.content)
@@ -60,7 +61,6 @@ def is_status_complete(test_id):
         raise Exception(
             f"Something went wrong checking the status of test `{test_id}`, we got HTTP status {response.status_code}:\n {response.content}")
 
-    print(response.content)
     result = json.loads(response.content)
 
     return result['val'] == result['max']

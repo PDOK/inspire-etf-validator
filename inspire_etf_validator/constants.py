@@ -1,7 +1,7 @@
 INSPIRE_ETF_ENDPOINT = "http://localhost:8080/validator"
 INSPIRE_ETF_API_VERSION = 'v2'
 
-SLEEP_TIME_IN_SECONDS = 8
+SLEEP_TIME_IN_SECONDS = 5
 
 TEST_ID_LIST = {
     "atom": "EID11571c92-3940-4f42-a6cd-5e2b1c6f4d93",
@@ -11,7 +11,8 @@ TEST_ID_LIST = {
 
 URL_NGR = "https://nationaalgeoregister.nl/geonetwork"
 
-CACHE_FILENAME = "../ngr_records_cache.json" # todo: configure path in cli signature
+CACHE_FILENAME = "../ngr_records_cache.json"
+DETAIL_OUTPUT_PATH = "run_detail_result"
 
 CACHE_EXPIRATION_IN_SECONDS = 86400  # is 1 day
 

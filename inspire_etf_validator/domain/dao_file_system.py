@@ -5,14 +5,15 @@ import json
 from os import listdir
 from os.path import join, isdir
 
+from inspire_etf_validator.constants import DETAIL_OUTPUT_PATH
 from inspire_etf_validator.util.time_util import to_filename_datetime
 
 
-def write_test_file(result_path, run_on, test_id, test_file_description, label_file_name, extension, content):
+def write_test_detail_file(result_path, run_on, test_id, test_file_description, label_file_name, extension, content):
     write_mode = "w"
     filename = f"{test_file_description}_{label_file_name}.{extension}"
-    filepath = os.path.join(result_path, to_filename_datetime(run_on), test_id)
-    filepath_name = os.path.join(filepath, filename)
+    filepath = join(get_master_result_path(result_path, run_on), DETAIL_OUTPUT_PATH, test_id)
+    filepath_name = join(filepath, filename)
 
     if type(content) is dict:
         content = json.dumps(content, indent=4)
@@ -20,10 +21,29 @@ def write_test_file(result_path, run_on, test_id, test_file_description, label_f
     if type(content) is bytes:
         write_mode = "wb"
 
-    try:
-        if not os.path.exists(filepath):
-            os.makedirs(filepath)
+    __ensure_directory_exists(filepath)
+    write_file(filepath_name, content, write_mode)
 
+
+def write_test_master_file(result_path, filename, run_on, content):
+    write_mode = "w"
+    filename = f"{filename}.json"
+    filepath = get_master_result_path(result_path, run_on)
+    filepath_name = join(filepath, filename)
+
+    content = json.dumps(content, indent=4)
+
+    __ensure_directory_exists(filepath)
+    write_file(filepath_name, content, write_mode)
+
+
+def __ensure_directory_exists(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+
+def write_file(filepath_name, content, write_mode="w"):
+    try:
         f = open(filepath_name, write_mode)
         f.write(content)
     except:
@@ -33,7 +53,12 @@ def write_test_file(result_path, run_on, test_id, test_file_description, label_f
         f.close()
 
 
+def get_master_result_path(result_path, run_on):
+    return join(result_path, to_filename_datetime(run_on))
+
+
 def get_result_master_list(path):
+    path = join(path, DETAIL_OUTPUT_PATH)
     test_detail_path_list = [f for f in listdir(path) if isdir(join(path, f))]
 
     test_result_list = []
