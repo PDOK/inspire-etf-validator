@@ -9,7 +9,21 @@ We can be installed with:
 pip3 install inspire-etf-validator
 ```
 
+## Usage
 
+Execute the script like this:
+
+`inspire_etf_validator -r /home/pdok/test`
+
+Or use pipenv:
+
+`pipenv run inspire_etf_validator -r /home/pdok/test`
+
+Options:
+
+* `-r` or `--result_path` -> Path pointing to a directory used for the output -> default: `../`;
+* `-e` or `--inspire_etf_endpoint` -> URL of the Inspire ETF service used to validate -> default: `http://localhost:8080/validator`; 
+* `-c` or `--enable-caching` -> Enables cache for retrieving NGR inspire endpoints.
 ## Development installation of this project itself
 
 We're installed with [pipenv](https://docs.pipenv.org/), a handy wrapper
