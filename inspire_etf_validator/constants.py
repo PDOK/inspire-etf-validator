@@ -1,6 +1,5 @@
-#INSPIRE_ETF_ENDPOINT = "http://localhost:8080/validator"
-INSPIRE_ETF_ENDPOINT = "https://inspire.ec.europa.eu/validator"
-INSPIRE_ETF_API_VERSION = 'v2'
+INSPIRE_ETF_ENDPOINT = "http://localhost:8080/validator"
+INSPIRE_ETF_API_VERSION = "v2"
 
 SLEEP_TIME_IN_SECONDS = 5
 
@@ -14,20 +13,21 @@ URL_NGR = "https://nationaalgeoregister.nl/geonetwork"
 
 CACHE_FILENAME = "../ngr_records_cache.json"
 DETAIL_OUTPUT_PATH = "run_detail_result"
+RUN_MASTER_RESULT_PATH = "run_master_result.json"
 
 CACHE_EXPIRATION_IN_SECONDS = 86400  # is 1 day
 
-REQUEST_HEADERS = {
-    'User-Agent': 'pdok.nl (inspire-etf-validator)'
-}
+REQUEST_HEADERS = {"User-Agent": "pdok.nl (inspire-etf-validator)"}
 
 NAMESPACE_PREFIXES = {
-    'csw': 'http://www.opengis.net/cat/csw/2.0.2',
-    'gmd': 'http://www.isotc211.org/2005/gmd',
-    'dc': 'http://purl.org/dc/elements/1.1/',
-    'gco': 'http://www.isotc211.org/2005/gco',
-    'gmx': 'http://www.isotc211.org/2005/gmx',
-    'ows': 'http://www.opengis.net/ows',
+    "csw": "http://www.opengis.net/cat/csw/2.0.2",
+    "gmd": "http://www.isotc211.org/2005/gmd",
+    "dc": "http://purl.org/dc/elements/1.1/",
+    "gco": "http://www.isotc211.org/2005/gco",
+    "gmx": "http://www.isotc211.org/2005/gmx",
+    "ows": "http://www.opengis.net/ows",
 }
 
-LOG_LINE_SEPARATOR = "-------------------------------------------------------------------------------"
+LOG_LINE_SEPARATOR = (
+    "-------------------------------------------------------------------------------"
+)

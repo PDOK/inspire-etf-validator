@@ -2,11 +2,11 @@ import time
 
 
 def to_datetime(datetime):
-    return time.strftime('%d-%m-%Y %H:%M:%S', time.localtime(datetime))
+    return time.strftime("%d-%m-%Y %H:%M:%S", time.localtime(datetime))
 
 
 def to_filename_datetime(datetime):
-    return time.strftime('%Y_%m_%d_%H_%M_%S', time.localtime(datetime))
+    return time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime(datetime))
 
 
 def time_now():

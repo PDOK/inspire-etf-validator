@@ -4,123 +4,126 @@ import re
 import requests
 from urllib.parse import urljoin
 
-from inspire_etf_validator.constants import INSPIRE_ETF_ENDPOINT, INSPIRE_ETF_API_VERSION, TEST_ID_LIST
+from inspire_etf_validator.constants import INSPIRE_ETF_API_VERSION, TEST_ID_LIST
 
 
-def __endpoint(path):
-    endpoint = INSPIRE_ETF_ENDPOINT
-    endpoint = urljoin(__fix_url(endpoint), INSPIRE_ETF_API_VERSION)
-    endpoint = urljoin(__fix_url(endpoint), path)
-    return endpoint
+class DaoEtfValidator:
+    def __init__(self, inspire_etf_endpoint):
+        self.inspire_etf_endpoint = inspire_etf_endpoint
 
+    def __endpoint(self, path):
+        endpoint = self.inspire_etf_endpoint
+        endpoint = urljoin(self.__fix_url(endpoint), INSPIRE_ETF_API_VERSION)
+        endpoint = urljoin(self.__fix_url(endpoint), path)
+        return endpoint
 
-def __fix_url(url):
-    return url.rstrip('/') + '/'
+    @staticmethod
+    def __fix_url(url):
+        return url.rstrip("/") + "/"
 
+    def start_test(self, label, test_type, service_endpoint):
+        endpoint = self.__endpoint("TestRuns")
 
-def start_test(label, type, service_endpoint):
-    endpoint = __endpoint('TestRuns')
-
-    type = __get_test_id(type)
-    body = {
-        "label": label,
-        "executableTestSuiteIds": [type],
-        "arguments": {
-            "testRunTags": label
-        },
-        "testObject": {
-            "resources": {
-                "serviceEndpoint": service_endpoint
-            }
+        test_type_id = self.__get_test_id(test_type)
+        body = {
+            "label": label,
+            "executableTestSuiteIds": [test_type_id],
+            "arguments": {"testRunTags": label},
+            "testObject": {"resources": {"serviceEndpoint": service_endpoint}},
         }
-    }
 
-    response = requests.post(endpoint, json=body)
+        response = requests.post(endpoint, json=body)
 
-    if response.status_code != 201:
-        # todo: specefieke exception gebruiken
-        raise Exception(f"Something went wrong starting the test, we got HTTP status {response.status_code}:\n {response.content}")
+        if response.status_code != 201:
+            # todo: specefieke exception gebruiken
+            raise Exception(
+                f"Something went wrong starting the test, we got HTTP status {response.status_code}:\n {response.content}"
+            )
 
-    result = json.loads(response.content)
+        result = json.loads(response.content)
 
-    return result
+        return result
 
+    @staticmethod
+    def __get_test_id(test_type):
 
-def __get_test_id(type):
+        if test_type not in TEST_ID_LIST:
+            raise Exception(
+                f"There is no test id for type `{test_type}`. Available test types are {', '.join(TEST_ID_LIST.keys())}."
+            )
 
-    if type not in TEST_ID_LIST:
-        raise Exception(f"There is no test id for type `{type}`. Available test types are {', '.join(TEST_ID_LIST.keys())}.")
+        return TEST_ID_LIST[test_type]
 
-    return TEST_ID_LIST[type]
+    def is_status_complete(self, test_id):
+        endpoint = self.__endpoint(f"TestRuns/{test_id}/progress")
+        response = requests.get(endpoint)
 
+        if response.status_code != 200:
+            raise Exception(
+                f"Something went wrong checking the status of test `{test_id}`, we got HTTP status {response.status_code}:\n {response.content}"
+            )
 
-def is_status_complete(test_id):
-    endpoint = __endpoint(f"TestRuns/{test_id}/progress")
-    response = requests.get(endpoint)
+        result = json.loads(response.content)
 
-    if response.status_code != 200:
-        raise Exception(
-            f"Something went wrong checking the status of test `{test_id}`, we got HTTP status {response.status_code}:\n {response.content}")
+        return result["val"] == result["max"]
 
-    result = json.loads(response.content)
+    def get_result(self, test_id):
+        endpoint = self.__endpoint(f"TestRuns/{test_id}")
+        response = requests.get(endpoint)
 
-    return result['val'] == result['max']
+        if response.status_code != 200:
+            raise Exception(
+                f"Something went wrong retrieving the result of test `{test_id}`, we got HTTP status {response.status_code}:\n {response.content}"
+            )
 
+        result = json.loads(response.content)
 
-def get_result(test_id):
-    endpoint = __endpoint(f"TestRuns/{test_id}")
-    response = requests.get(endpoint)
+        return result
 
-    if response.status_code != 200:
-        raise Exception(
-            f"Something went wrong retrieving the result of test `{test_id}`, we got HTTP status {response.status_code}:\n {response.content}")
+    def get_log(self, test_id):
+        endpoint = self.__endpoint(f"TestRuns/{test_id}/log")
+        response = requests.get(endpoint)
 
-    result = json.loads(response.content)
+        if response.status_code != 200:
+            raise Exception(
+                f"Something went wrong retrieving the log of test `{test_id}`, we got HTTP status {response.status_code}:\n {response.content}"
+            )
 
-    return result
+        return response.content
 
+    def get_html_report(self, test_id):
+        endpoint = self.__endpoint(f"TestRuns/{test_id}.html?download=false")
+        response = requests.get(endpoint)
 
-def get_log(test_id):
-    endpoint = __endpoint(f"TestRuns/{test_id}/log")
-    response = requests.get(endpoint)
+        if response.status_code != 200 and response.status_code != 202:
+            raise Exception(
+                f"Something went wrong retrieving the html report of test `{test_id}`, we got HTTP status {response.status_code}:\n {response.content}"
+            )
 
-    if response.status_code != 200:
-        raise Exception(
-            f"Something went wrong retrieving the log of test `{test_id}`, we got HTTP status {response.status_code}:\n {response.content}")
+        return response.content
 
-    return response.content
+    @staticmethod
+    def get_testrun_id(test_result):
+        return test_result["EtfItemCollection"]["testRuns"]["TestRun"]["id"]
 
+    @staticmethod
+    def get_testrun_status(test_result):
+        return test_result["EtfItemCollection"]["testRuns"]["TestRun"]["status"]
 
-def get_html_report(test_id):
-    endpoint = __endpoint(f"TestRuns/{test_id}.html?download=false")
-    response = requests.get(endpoint)
+    @staticmethod
+    def get_inspire_etf_eu_version(test_result):
+        # Notice -> this way we get the inspire etf version mentioned on the EU github page dynamically (in a hacky way)
+        # Source: https://github.com/inspire-eu-validation/community/releases
 
-    if response.status_code != 200 and response.status_code != 202:
-        raise Exception(
-            f"Something went wrong retrieving the html report of test `{test_id}`, we got HTTP status {response.status_code}:\n {response.content}")
+        version = "?"
 
-    return response.content
+        try:
+            url = test_result["EtfItemCollection"]["referencedItems"][
+                "translationTemplateBundles"
+            ]["TranslationTemplateBundle"]["source"]
+            reg = re.search(r"ets-repository-([1-9]\d\d\d\.?\d?\d?)", url)
+            version = reg.group(1)
+        except (KeyError, AttributeError, IndexError, TypeError):
+            print("could not find inspire etf eu version")
 
-
-def get_testrun_id(test_result):
-    return test_result["EtfItemCollection"]["testRuns"]["TestRun"]["id"]
-
-
-def get_testrun_status(test_result):
-    return test_result["EtfItemCollection"]["testRuns"]["TestRun"]["status"]
-
-
-def get_inspire_etf_eu_version(test_result):
-    # Notice -> this way we get the inspire etf version mentioned on the EU github page dynamically (in a hacky way)
-    # Source: https://github.com/inspire-eu-validation/community/releases
-
-    version = "?"
-
-    try:
-        url = test_result["EtfItemCollection"]["referencedItems"]["translationTemplateBundles"]["TranslationTemplateBundle"]["source"]
-        reg = re.search(r"ets-repository-([1-9]\d\d\d\.?\d?\d?)", url)
-        version = reg.group(1)
-    except (KeyError, AttributeError, IndexError, TypeError):
-        print("could not find inspire etf eu version")
-
-    return version
+        return version

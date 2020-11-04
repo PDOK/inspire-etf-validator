@@ -1,28 +1,39 @@
-from inspire_etf_validator.domain.dao_etf_validator import get_testrun_status
+def aggregate_master(master):
 
-
-def aggregate_master(result_list):
-
-    aggregate_list = []
     status_summary = {}
-    for result in result_list:
-        test_id = get_testrun_status(result)
-        test_status = get_testrun_status(result)
+    status_summary_per_service = {}
+    for detail in master["result"]:
+
+        test_status = detail["test_result"]
+        test_service_type = detail["test_service_type"]
 
         if test_status not in status_summary:
             status_summary[test_status] = 0
 
-        status_summary[test_status] = status_summary[test_status] + 1
+        if test_service_type not in status_summary_per_service:
+            status_summary_per_service[test_service_type] = {}
 
-        aggregate_list.append({
-            "id": test_id,
-            "status": test_status
-        })
+        if test_status not in status_summary_per_service[test_service_type]:
+            status_summary_per_service[test_service_type][test_status] = 0
 
-    aggregate_result = {
-        "total": len(result_list),
+        status_summary[test_status] += 1
+        status_summary_per_service[test_service_type][test_status] += 1
+
+    summary = {
         "status_summary": status_summary,
-        "list": aggregate_list
+        "status_summary_per_service": status_summary_per_service,
     }
 
-    return aggregate_result
+    return summary
+
+
+def filter_status(master, status):
+
+    filtered_list = []
+    for detail in master["result"]:
+        test_status = detail["test_result"]
+
+        if test_status == status:
+            filtered_list.append(detail)
+
+    return filtered_list
