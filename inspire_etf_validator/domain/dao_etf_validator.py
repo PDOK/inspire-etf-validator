@@ -1,10 +1,13 @@
 import json
+import logging
 import re
 
 import requests
 from urllib.parse import urljoin
 
 from inspire_etf_validator.constants import INSPIRE_ETF_API_VERSION, TEST_ID_LIST
+
+logger = logging.getLogger(__name__)
 
 
 class DaoEtfValidator:
@@ -36,7 +39,7 @@ class DaoEtfValidator:
 
         if response.status_code != 201:
             # todo: specefieke exception gebruiken
-            raise Exception(
+            raise DaoEtfValidatorException(
                 f"Something went wrong starting the test, we got HTTP status {response.status_code}:\n {response.content}"
             )
 
@@ -48,7 +51,7 @@ class DaoEtfValidator:
     def __get_test_id(test_type):
 
         if test_type not in TEST_ID_LIST:
-            raise Exception(
+            raise DaoEtfValidatorException(
                 f"There is no test id for type `{test_type}`. Available test types are {', '.join(TEST_ID_LIST.keys())}."
             )
 
@@ -59,7 +62,7 @@ class DaoEtfValidator:
         response = requests.get(endpoint)
 
         if response.status_code != 200:
-            raise Exception(
+            raise DaoEtfValidatorException(
                 f"Something went wrong checking the status of test `{test_id}`, we got HTTP status {response.status_code}:\n {response.content}"
             )
 
@@ -72,7 +75,7 @@ class DaoEtfValidator:
         response = requests.get(endpoint)
 
         if response.status_code != 200:
-            raise Exception(
+            raise DaoEtfValidatorException(
                 f"Something went wrong retrieving the result of test `{test_id}`, we got HTTP status {response.status_code}:\n {response.content}"
             )
 
@@ -85,7 +88,7 @@ class DaoEtfValidator:
         response = requests.get(endpoint)
 
         if response.status_code != 200:
-            raise Exception(
+            raise DaoEtfValidatorException(
                 f"Something went wrong retrieving the log of test `{test_id}`, we got HTTP status {response.status_code}:\n {response.content}"
             )
 
@@ -96,7 +99,7 @@ class DaoEtfValidator:
         response = requests.get(endpoint)
 
         if response.status_code != 200 and response.status_code != 202:
-            raise Exception(
+            raise DaoEtfValidatorException(
                 f"Something went wrong retrieving the html report of test `{test_id}`, we got HTTP status {response.status_code}:\n {response.content}"
             )
 
@@ -124,6 +127,10 @@ class DaoEtfValidator:
             reg = re.search(r"ets-repository-([1-9]\d\d\d\.?\d?\d?)", url)
             version = reg.group(1)
         except (KeyError, AttributeError, IndexError, TypeError):
-            print("could not find inspire etf eu version")
+            logger.error("Could not find Inspire ETF EU version")
 
         return version
+
+
+class DaoEtfValidatorException(Exception):
+    pass

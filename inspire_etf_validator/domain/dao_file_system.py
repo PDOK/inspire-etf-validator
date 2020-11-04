@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 import json
@@ -5,6 +6,8 @@ from os.path import join
 
 from inspire_etf_validator.constants import DETAIL_OUTPUT_PATH, RUN_MASTER_RESULT_PATH
 from inspire_etf_validator.util.time_util import to_filename_datetime
+
+logger = logging.getLogger(__name__)
 
 
 def write_test_detail_file(
@@ -55,7 +58,7 @@ def write_file(filepath_name, content, write_mode="w"):
         f = open(filepath_name, write_mode)
         f.write(content)
     except:
-        print("Error writing test output file:", sys.exc_info())
+        logger.info("Error writing test output file:", sys.exc_info())
         raise
     else:
         f.close()
@@ -81,7 +84,7 @@ def __json_file_to_dict(path):
         test_detail_file_json = f.read()
         result = json.loads(test_detail_file_json)
     except:
-        print(f"Error reading test result file at: {path}\n")
+        logger.info(f"Error reading test result file at: {path}\n")
         raise
     else:
         f.close()

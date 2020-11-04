@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta
@@ -13,22 +14,24 @@ from inspire_etf_validator.constants import (
     REQUEST_HEADERS,
 )
 
+logger = logging.getLogger(__name__)
+
 
 # todo: dataset id toevoegen aan record -> zodat we op basis van dataset kunnen groeperen
 def get_all_ngr_records(enable_caching):
     # if there is no cache file or it is expired, create it. otherwise read the cache file
     if not os.path.isfile(CACHE_FILENAME) or __cache_is_expired():
-        print("downloading ngr record data...")
+        logger.info("downloading ngr record data...")
         ngr_records = __get_all_ngr_records()
         for ngr_record in ngr_records:
             ngr_record.update(__get_record_info(ngr_record["uuid"]))
 
         if enable_caching:
-            print("writing all ngr record data to cache file " + CACHE_FILENAME)
+            logger.info("writing all ngr record data to cache file " + CACHE_FILENAME)
             with open(CACHE_FILENAME, "w", encoding="utf-8") as f:
                 json.dump(ngr_records, f, ensure_ascii=False, indent=4)
     else:
-        print("reading ngr records from cache file " + CACHE_FILENAME)
+        logger.info("reading ngr records from cache file " + CACHE_FILENAME)
         with open(CACHE_FILENAME) as infile:
             ngr_records = json.load(infile)
 
@@ -56,7 +59,7 @@ def __get_all_ngr_records():
             "&constraint_language_version=1.1.0&constraint=type='service'+AND"
             "+organisationName='Beheer+PDOK'&startPosition=" + start_position
         )
-        print("fetching records_base_url: " + records_base_url)
+        logger.info("fetching records_base_url: " + records_base_url)
         response = requests.get(records_base_url, headers=REQUEST_HEADERS)
         document = ET.fromstring(response.content)
 
@@ -118,7 +121,7 @@ def __get_record_info(uuid):
         + uuid
         + "#MD_DataIdentification "
     )
-    print("fetching record_info_base_url: " + record_info_base_url)
+    logger.info("fetching record_info_base_url: " + record_info_base_url)
     response = requests.get(record_info_base_url, headers=REQUEST_HEADERS)
     document = ET.fromstring(response.content)
 

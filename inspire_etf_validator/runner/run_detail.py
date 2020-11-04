@@ -28,19 +28,19 @@ def run_detail(result_path, endpoint_info, start_time_master, inspire_etf_endpoi
     test_id = None
     test_result = None
 
-    # logger.info("Started test with label %s", label)
-    print(LOG_LINE_SEPARATOR)
-    print("Started test")
-    print("Start time:", to_datetime(start_time))
-    print("Test label: ", label)
-    print("Test endpoint: ", endpoint)
-    print(LOG_LINE_SEPARATOR)
+    logger.info("Started test with label %s", label)
+    logger.info(LOG_LINE_SEPARATOR)
+    logger.info("Started test")
+    logger.info("Start time: %s", to_datetime(start_time))
+    logger.info("Test label: %s", label)
+    logger.info("Test endpoint: %s", endpoint)
+    logger.info(LOG_LINE_SEPARATOR)
 
     try:
         test_result = client.start_test(label, service_type, endpoint)
         test_id = client.get_testrun_id(test_result)
 
-        print("Test id: ", test_id)
+        logger.info("Test id: %s", test_id)
 
         wait_until_finished(test_id, client)
 
@@ -75,14 +75,14 @@ def run_detail(result_path, endpoint_info, start_time_master, inspire_etf_endpoi
     except Exception:
         error = str(sys.exc_info())
         result["error"] = error
-        print(error)
+        logger.error(error)
 
     end_time = time_now()
 
-    print(LOG_LINE_SEPARATOR)
-    print("Stop test: ", test_id)
-    print("End time: ", to_datetime(end_time))
-    print("Duration: ", to_duration(start_time, end_time))
+    logger.info(LOG_LINE_SEPARATOR)
+    logger.info("Stop test: %s", test_id)
+    logger.info("End time: %s", to_datetime(end_time))
+    logger.info("Duration: %s", to_duration(start_time, end_time))
 
     result["start_time"] = to_datetime(start_time)
     result["start_timestamp"] = start_time

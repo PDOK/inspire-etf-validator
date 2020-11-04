@@ -8,12 +8,12 @@ import click_log
 
 # Setup logging before package imports.
 from inspire_etf_validator.constants import INSPIRE_ETF_ENDPOINT
+from inspire_etf_validator.error import AppError
 
 logger = logging.getLogger(__name__)
 click_log.basic_config(logger)
 
 from inspire_etf_validator.core import main, generate_report
-from inspire_etf_validator.error import AppError
 
 
 def set_level():

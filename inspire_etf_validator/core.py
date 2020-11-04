@@ -20,7 +20,7 @@ def main(result_path, enable_caching, inspire_etf_endpoint):
     # )
     aggregate_list = aggregate_master(result)
 
-    print(aggregate_list)
+    logger.info(aggregate_list)
 
 
 def generate_report(master_result_path):
