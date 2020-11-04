@@ -1,3 +1,8 @@
+import pkg_resources
+
+USER_AGENT = "PDOK Inspire ETF validator " + pkg_resources.require("inspire-etf-validator")[0].version
+PDOK_EMAIL = "PDOK@kadaster.nl"
+
 INSPIRE_ETF_ENDPOINT = "http://localhost:8080/validator"
 INSPIRE_ETF_API_VERSION = "v2"
 

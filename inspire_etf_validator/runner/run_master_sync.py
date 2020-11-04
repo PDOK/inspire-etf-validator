@@ -6,8 +6,8 @@ from inspire_etf_validator.constants import (
     INSPIRE_ETF_ENDPOINT,
     INSPIRE_ETF_API_VERSION,
 )
-from inspire_etf_validator.domain.dao_etf_validator import DaoEtfValidator
-from inspire_etf_validator.domain.dao_file_system import (
+from inspire_etf_validator.domain.etf_validator import DaoEtfValidator
+from inspire_etf_validator.domain.file_system import (
     write_test_master_file,
     get_master_result_path,
 )
@@ -23,9 +23,7 @@ def run_master(result_path, endpoint_list, inspire_etf_endpoint):
     result_master = {
         "inspire_etf_endpoint": INSPIRE_ETF_ENDPOINT,
         "inspire_etf_api_version": INSPIRE_ETF_API_VERSION,
-        "inspire_etf_py_version": pkg_resources.require("inspire-etf-validator")[
-            0
-        ].version,
+        "inspire_etf_py_version": pkg_resources.require("inspire-etf-validator")[0].version,
         "inspire_etf_eu_version": None,
         "start_time": to_datetime(start_time),
         "start_timestamp": start_time,

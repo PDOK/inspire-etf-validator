@@ -5,12 +5,17 @@ import re
 import requests
 from urllib.parse import urljoin
 
-from inspire_etf_validator.constants import INSPIRE_ETF_API_VERSION, TEST_ID_LIST
+from inspire_etf_validator.constants import INSPIRE_ETF_API_VERSION, TEST_ID_LIST, USER_AGENT, PDOK_EMAIL
 
 logger = logging.getLogger(__name__)
 
 
 class DaoEtfValidator:
+    headers = {
+        "User-Agent": USER_AGENT,
+        "From": PDOK_EMAIL
+    }
+
     def __init__(self, inspire_etf_endpoint):
         self.inspire_etf_endpoint = inspire_etf_endpoint
 
@@ -35,7 +40,7 @@ class DaoEtfValidator:
             "testObject": {"resources": {"serviceEndpoint": service_endpoint}},
         }
 
-        response = requests.post(endpoint, json=body)
+        response = requests.post(endpoint, json=body, headers=self.headers)
 
         if response.status_code != 201:
             # todo: specefieke exception gebruiken
@@ -59,7 +64,7 @@ class DaoEtfValidator:
 
     def is_status_complete(self, test_id):
         endpoint = self.__endpoint(f"TestRuns/{test_id}/progress")
-        response = requests.get(endpoint)
+        response = requests.get(endpoint, headers=self.headers)
 
         if response.status_code != 200:
             raise DaoEtfValidatorException(
@@ -72,7 +77,7 @@ class DaoEtfValidator:
 
     def get_result(self, test_id):
         endpoint = self.__endpoint(f"TestRuns/{test_id}")
-        response = requests.get(endpoint)
+        response = requests.get(endpoint, headers=self.headers)
 
         if response.status_code != 200:
             raise DaoEtfValidatorException(
@@ -85,7 +90,7 @@ class DaoEtfValidator:
 
     def get_log(self, test_id):
         endpoint = self.__endpoint(f"TestRuns/{test_id}/log")
-        response = requests.get(endpoint)
+        response = requests.get(endpoint, headers=self.headers)
 
         if response.status_code != 200:
             raise DaoEtfValidatorException(
@@ -96,7 +101,7 @@ class DaoEtfValidator:
 
     def get_html_report(self, test_id):
         endpoint = self.__endpoint(f"TestRuns/{test_id}.html?download=false")
-        response = requests.get(endpoint)
+        response = requests.get(endpoint, headers=self.headers)
 
         if response.status_code != 200 and response.status_code != 202:
             raise DaoEtfValidatorException(
