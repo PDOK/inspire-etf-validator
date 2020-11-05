@@ -6,7 +6,7 @@ from inspire_etf_validator.constants import (
     INSPIRE_ETF_ENDPOINT,
     INSPIRE_ETF_API_VERSION,
 )
-from inspire_etf_validator.domain.etf_validator import DaoEtfValidator
+from inspire_etf_validator.domain.etf_validator import EtfValidatorClient
 from inspire_etf_validator.domain.file_system import (
     write_test_master_file,
     get_master_result_path,
@@ -63,7 +63,7 @@ def run_master(result_path, endpoint_list, inspire_etf_endpoint):
     result_master["result"] = result_detail_list
     result_master[
         "inspire_etf_eu_version"
-    ] = DaoEtfValidator.get_inspire_etf_eu_version(test_result_detail)
+    ] = EtfValidatorClient.get_inspire_etf_eu_version(test_result_detail)
 
     write_test_master_file(result_path, "run_master_result", start_time, result_master)
 

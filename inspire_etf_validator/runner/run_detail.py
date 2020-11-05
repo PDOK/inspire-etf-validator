@@ -2,7 +2,7 @@ import sys
 import logging
 
 from inspire_etf_validator.constants import LOG_LINE_SEPARATOR
-from inspire_etf_validator.domain.etf_validator import DaoEtfValidator
+from inspire_etf_validator.domain.etf_validator import EtfValidatorClient
 from inspire_etf_validator.domain.file_system import write_test_detail_file
 from inspire_etf_validator.runner.waiter import wait_until_finished
 from inspire_etf_validator.util.time_util import to_datetime, to_duration, time_now
@@ -18,7 +18,7 @@ def run_detail(result_path, endpoint_info, start_time_master, inspire_etf_endpoi
         "error": None,
     }
 
-    client = DaoEtfValidator(inspire_etf_endpoint)
+    client = EtfValidatorClient(inspire_etf_endpoint)
 
     start_time = time_now()
     service_type = endpoint_info["pdokServiceType"].lower()

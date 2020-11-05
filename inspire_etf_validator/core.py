@@ -24,17 +24,17 @@ def generate_report(master_result_path):
     master_result = get_run_master_result(master_result_path)
     aggregate_list = aggregate_master(master_result)
 
-    print(aggregate_list)
+    logger.info(aggregate_list)
 
     test_run_with_exception = filter_status(master_result, "TEST_RUN_FAIL")
 
     for with_e7n in test_run_with_exception:
-        print("id", with_e7n["test_id"])
-        print("result", with_e7n["test_result"])
-        print("duration", with_e7n["duration"])
-        print("endpoint", with_e7n["test_endpoint"])
-        print("Error:")
-        print(LOG_LINE_SEPARATOR)
-        print(with_e7n["error"])
-        print(LOG_LINE_SEPARATOR)
-        print(LOG_LINE_SEPARATOR)
+        logger.info("id", with_e7n["test_id"])
+        logger.info("result", with_e7n["test_result"])
+        logger.info("duration", with_e7n["duration"])
+        logger.info("endpoint", with_e7n["test_endpoint"])
+        logger.info("Error:")
+        logger.info(LOG_LINE_SEPARATOR)
+        logger.info(with_e7n["error"])
+        logger.info(LOG_LINE_SEPARATOR)
+        logger.info(LOG_LINE_SEPARATOR)
