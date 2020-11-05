@@ -1,25 +1,33 @@
 # inspire-etf-validator
-Introduction
-
-Usage, etc.
-
+Python script to run Inspire ETF validation for every PDOK Inspire endpoint in NGR.
 
 ## Installation
 
 We can be installed with:
 
 ```bash
-pip install inspire-etf-validator
+pip3 install inspire-etf-validator
 ```
 
+## Usage
 
-(TODO: after the first release has been made)
+Execute the script like this:
 
+`inspire_etf_validator -r /home/pdok/test`
 
+Or use pipenv:
+
+`pipenv run inspire_etf_validator -r /home/pdok/test`
+
+Options:
+
+* `-r` or `--result_path` -> Path pointing to a directory used for the output -> default: `../`;
+* `-e` or `--inspire_etf_endpoint` -> URL of the Inspire ETF service used to validate -> default: `http://localhost:8080/validator`; 
+* `-c` or `--enable-caching` -> Enables cache for retrieving NGR inspire endpoints.
 ## Development installation of this project itself
 
 We're installed with [pipenv](https://docs.pipenv.org/), a handy wrapper
-around pip and virtualenv. Install that first with `pip install pipenv`. Then run:
+around pip and virtualenv. Install that first with `pip3 install pipenv`. Then run:
 
 ```bash
 PIPENV_VENV_IN_PROJECT=1 pipenv install --python 3.8 --dev
@@ -35,7 +43,7 @@ There will be a script you can run like this::
 pipenv run inspire-etf-validator
 ```
 
-It runs the `main()` function in `inspire-etf-validator/scripts.py`,
+It runs the `main()` function in `inspire-etf-validator/core.py`,
 adjust that if necessary. The script is configured in `setup.py` (see
 `entry_points`).
 
@@ -76,29 +84,4 @@ sudo apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev li
 curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
 ```
 
-Also make sure to put pyenv in your `.bashrc` or `.zshrc` as instructed by the previous commands. 
-
-
-## Steps to do after generating with cookiecutter
-
-- Add a new project on https://github.com/PDOK/ with the same name. Set
-  visibility to "public" and do not generate a license or readme.
-
-  Note: "public" means "don't put customer data or sample data with real
-  persons' addresses on github"!
-
-- Follow the steps you then see (from "git init" to "git push origin master")
-  and your code will be online.
-
-- Go to
-  https://github.com/PDOK/inspire-etf-validator/settings/collaboration
-  and add the teams with write access (you might have to ask someone with
-  admin rights to do it).
-
-- Once you installed with pipenv, add Pipfile.lock to git: `git add Pipfile.lock` and commit it to your repo. 
-
-- Update this readme. Use [markdown](https://commonmark.org/) as the format.
-
-- Ask Roel for a review.
-
-- Remove this section as you've done it all :-)
+Also make sure to put pyenv in your `.bashrc` or `.zshrc` as instructed by the previous commands.

@@ -1,27 +1,40 @@
 import logging
 
-from inspire_etf_validator.domain.dao_etf_validator import test
+from inspire_etf_validator.constants import LOG_LINE_SEPARATOR
+from inspire_etf_validator.domain.file_system import get_run_master_result
+from inspire_etf_validator.report.aggregate import aggregate_master, filter_status
+from inspire_etf_validator.runner import run_master_sync
+from inspire_etf_validator.domain.ngr import get_all_ngr_records
 
 logger = logging.getLogger(__name__)
 
 
-def main():
-    """TODO Docstring."""
+def main(result_path, enable_caching, inspire_etf_endpoint):
 
-    #todo: haal lijst op van alle services als die ouder is dan x aantal dagen -> cachsing inbouwen
+    all_ngr_records = get_all_ngr_records(enable_caching)
+    result, master_result_path = run_master_sync.run_master(
+         result_path, all_ngr_records, inspire_etf_endpoint
+    )
+    aggregate_list = aggregate_master(result)
 
-    #todo: Run voor elke service de validaties:
+    logger.info(aggregate_list)
 
-        #todo: run metadtaa validatie
 
-        #todo: run atom validatie
+def generate_report(master_result_path):
+    master_result = get_run_master_result(master_result_path)
+    aggregate_list = aggregate_master(master_result)
 
-        #todo: run wms validatie
+    logger.info(aggregate_list)
 
-        #todo: run wfs validatie
+    test_run_with_exception = filter_status(master_result, "TEST_RUN_FAIL")
 
-        #todo: Voeg resultaten toe aan samenvatting
-
-    #todo: Als alles klaar is spuw een samenvatting uit
-
-    test()
+    for with_e7n in test_run_with_exception:
+        logger.info("id", with_e7n["test_id"])
+        logger.info("result", with_e7n["test_result"])
+        logger.info("duration", with_e7n["duration"])
+        logger.info("endpoint", with_e7n["test_endpoint"])
+        logger.info("Error:")
+        logger.info(LOG_LINE_SEPARATOR)
+        logger.info(with_e7n["error"])
+        logger.info(LOG_LINE_SEPARATOR)
+        logger.info(LOG_LINE_SEPARATOR)
