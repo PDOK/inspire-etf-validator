@@ -5,7 +5,8 @@ import re
 import requests
 from urllib.parse import urljoin
 
-from inspire_etf_validator.constants import INSPIRE_ETF_API_VERSION, TEST_ID_LIST, USER_AGENT, PDOK_EMAIL
+from inspire_etf_validator.constants import INSPIRE_ETF_API_VERSION, SERVICE_TEST_IDS, METADATA_TEST_IDS, USER_AGENT, PDOK_EMAIL, \
+    TID_SERVICE_MD_COMMON_REQUIREMENTS
 
 logger = logging.getLogger(__name__)
 
@@ -16,8 +17,9 @@ class EtfValidatorClient:
         "From": PDOK_EMAIL
     }
 
-    def __init__(self, inspire_etf_endpoint):
+    def __init__(self, inspire_etf_endpoint, testfunction):
         self.inspire_etf_endpoint = inspire_etf_endpoint
+        self.testfunction = testfunction
 
     def __endpoint(self, path):
         endpoint = self.inspire_etf_endpoint
@@ -29,16 +31,30 @@ class EtfValidatorClient:
     def __fix_url(url):
         return url.rstrip("/") + "/"
 
-    def start_test(self, label, test_type, service_endpoint):
-        endpoint = self.__endpoint("TestRuns")
-
-        test_type_id = self.__get_test_id(test_type)
+    def start_service_test(self, label, test_type, service_endpoint):
+        test_type_id = self.__get_test_id(test_type, SERVICE_TEST_IDS)
         body = {
             "label": label,
             "executableTestSuiteIds": [test_type_id],
             "arguments": {"testRunTags": label},
             "testObject": {"resources": {"serviceEndpoint": service_endpoint}},
         }
+        return self.__start_test(body)
+
+    def start_service_md_test(self, label, md_test_type, metadata_url):
+        test_type_id = self.__get_test_id(md_test_type, METADATA_TEST_IDS)
+        body = {
+            "label": label,
+            "executableTestSuiteIds": [test_type_id],
+            "arguments": {"testRunTags": label},
+            "testObject": {"resources": {"data": metadata_url}},
+        }
+        return self.__start_test(body)
+
+
+
+    def __start_test(self, body):
+        endpoint = self.__endpoint("TestRuns")
 
         response = requests.post(endpoint, json=body, headers=self.headers)
 
@@ -52,14 +68,14 @@ class EtfValidatorClient:
         return result
 
     @staticmethod
-    def __get_test_id(test_type):
+    def __get_test_id(test_type, test_ids_dictonary):
 
-        if test_type not in TEST_ID_LIST:
+        if test_type not in test_ids_dictonary:
             raise EtfValidatorClientException(
-                f"There is no test id for type `{test_type}`. Available test types are {', '.join(TEST_ID_LIST.keys())}."
+                f"There is no test id for type `{test_type}`. Available test types are {', '.join(test_ids_dictonary.keys())}."
             )
 
-        return TEST_ID_LIST[test_type]
+        return test_ids_dictonary[test_type]
 
     def is_status_complete(self, test_id):
         endpoint = self.__endpoint(f"TestRuns/{test_id}/progress")

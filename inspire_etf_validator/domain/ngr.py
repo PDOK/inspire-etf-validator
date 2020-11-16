@@ -12,6 +12,10 @@ from inspire_etf_validator.constants import (
     CACHE_FILENAME,
     CACHE_EXPIRATION_IN_SECONDS,
     REQUEST_HEADERS,
+    SC_NS_AS_IS,
+    SC_NS_HARMONIZED,
+    SC_SDS_INTEROPERABLE,
+    SC_SDS_INVOCABLE,
 )
 
 logger = logging.getLogger(__name__)
@@ -146,18 +150,57 @@ def __get_record_info(uuid):
         ".//gmd:metadataStandardVersion/gco:CharacterString", NAMESPACE_PREFIXES
     ).text
 
+    inspire_theme, service_category = __get_service_category(document)
+
     result["pdokServiceType"] = __get_service_type(service_access_point)
-    result["serviceAccessPoint"] = service_access_point
+    result["serviceAccessPoint"] = __remove_parameters_from_request(service_access_point)
     result["metadataStandardVersion"] = profile_version
     result["protocol"] = protocol
     result["getRecordByIdUrl"] = record_info_base_url
+    result["inspireTheme"] = inspire_theme
+    result["serviceCategory"] = service_category
 
     return result
 
 
-def get_filtered_ngr_records(ngr_records, pdok_service_type):
+def __get_service_category(document):
+    inspire_theme = document.find(
+        ".//srv:SV_ServiceIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:type/gmd:MD_KeywordTypeCode[@codeList='https://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/gmxCodelists.xml#MD_KeywordTypeCode'][@codeListValue='theme']../../gmd:keyword/gmx:Anchor[@xlink:href]",
+        NAMESPACE_PREFIXES
+    )
+    if inspire_theme is not None:
+        inspire_theme = inspire_theme.attrib['{http://www.w3.org/1999/xlink}href']
+
+    service_category = None
+    service_type = document.find(
+        ".//srv:SV_ServiceIdentification/srv:serviceType/gco:LocalName", NAMESPACE_PREFIXES
+    ).text
+    if service_type in ["view", "download"]:
+        if inspire_theme is None:
+            service_category = SC_NS_AS_IS
+        else:
+            service_category = SC_NS_HARMONIZED
+    if service_type == "other":
+        if document.find(
+                ".//gmd:report/gmd:DQ_DomainConsistency/gmd:result/gmd:DQ_ConformanceResult/gmd:specification/gmd:CI_Citation/gmd:title/gmx:Anchor[@xlink:href='http://inspire.ec.europa.eu/id/ats/metadata/2.0/sds-interoperable']",
+                NAMESPACE_PREFIXES
+                ) is not None:
+            service_category = SC_SDS_INTEROPERABLE
+        if document.find(
+                ".//gmd:report/gmd:DQ_DomainConsistency/gmd:result/gmd:DQ_ConformanceResult/gmd:specification/gmd:CI_Citation/gmd:title/gmx:Anchor[@xlink:href='http://inspire.ec.europa.eu/id/ats/metadata/2.0/sds-invocable']",
+                NAMESPACE_PREFIXES
+                ) is not None:
+            service_category = SC_SDS_INVOCABLE
+    return inspire_theme, service_category
+
+
+def __remove_parameters_from_request(url):
+    return url
+    # return url.split("?", 1)[0]
+
+def get_filtered_ngr_entries(ngr_records, pdok_service_types):
     records = []
     for ngr_record in ngr_records:
-        if ngr_record["pdokServiceType"] == pdok_service_type:
+        if ngr_record["pdokServiceType"] in pdok_service_types:
             records.append(ngr_record)
     return records
