@@ -4,7 +4,10 @@ from inspire_etf_validator.constants import LOG_LINE_SEPARATOR
 from inspire_etf_validator.domain.file_system import get_run_master_result
 from inspire_etf_validator.report.aggregate import aggregate_master, filter_status
 from inspire_etf_validator.runner import run_master_sync
-from inspire_etf_validator.domain.ngr import get_all_ngr_records, get_filtered_ngr_entries
+from inspire_etf_validator.domain.ngr import (
+    get_all_ngr_records,
+    get_filtered_ngr_entries,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +19,7 @@ def main(result_path, enable_caching, inspire_etf_endpoint):
     ngr_entries = get_filtered_ngr_entries(all_ngr_entries, ["ATOM", "WFS", "WMS"])
 
     result, master_result_path = run_master_sync.run_master(
-         result_path, ngr_entries, inspire_etf_endpoint
+        result_path, ngr_entries, inspire_etf_endpoint
     )
     aggregate_list = aggregate_master(result)
 

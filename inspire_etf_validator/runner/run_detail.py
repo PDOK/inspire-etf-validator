@@ -10,17 +10,47 @@ from inspire_etf_validator.util.time_util import to_datetime, to_duration, time_
 logger = logging.getLogger(__name__)
 
 
-def run_service_detail(result_path, endpoint_info, start_time_master, inspire_etf_endpoint):
+def run_service_detail(
+    result_path, endpoint_info, start_time_master, inspire_etf_endpoint
+):
     test_type = endpoint_info["pdokServiceType"].lower()
-    test_endpoint=endpoint_info["serviceAccessPoint"]
-    return __run_detail(result_path, endpoint_info, start_time_master, inspire_etf_endpoint, EtfValidatorClient.start_service_test, test_endpoint, test_type)
+    test_endpoint = endpoint_info["serviceAccessPoint"]
+    return __run_detail(
+        result_path,
+        endpoint_info,
+        start_time_master,
+        inspire_etf_endpoint,
+        EtfValidatorClient.start_service_test,
+        test_endpoint,
+        test_type,
+    )
 
-def run_metadata_detail(result_path, endpoint_info, start_time_master, inspire_etf_endpoint):
+
+def run_metadata_detail(
+    result_path, endpoint_info, start_time_master, inspire_etf_endpoint
+):
     test_endpoint = endpoint_info["getRecordByIdUrl"].strip()
     test_type = endpoint_info["serviceCategory"]
-    return __run_detail(result_path, endpoint_info, start_time_master, inspire_etf_endpoint, EtfValidatorClient.start_service_md_test, test_endpoint, test_type)
+    return __run_detail(
+        result_path,
+        endpoint_info,
+        start_time_master,
+        inspire_etf_endpoint,
+        EtfValidatorClient.start_service_md_test,
+        test_endpoint,
+        test_type,
+    )
 
-def __run_detail(result_path, endpoint_info, start_time_master, inspire_etf_endpoint, testfunction, test_endpoint, test_type):
+
+def __run_detail(
+    result_path,
+    endpoint_info,
+    start_time_master,
+    inspire_etf_endpoint,
+    testfunction,
+    test_endpoint,
+    test_type,
+):
 
     result = {
         "start_time": None,
@@ -84,7 +114,7 @@ def __run_detail(result_path, endpoint_info, start_time_master, inspire_etf_endp
     except Exception:
         error = str(sys.exc_info())
         result["error"] = error
-        logger.error(error)l
+        logger.error(error)
 
     end_time = time_now()
 

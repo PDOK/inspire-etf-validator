@@ -5,17 +5,20 @@ import re
 import requests
 from urllib.parse import urljoin
 
-from inspire_etf_validator.constants import INSPIRE_ETF_API_VERSION, SERVICE_TEST_IDS, METADATA_TEST_IDS, USER_AGENT, PDOK_EMAIL, \
-    TID_SERVICE_MD_COMMON_REQUIREMENTS
+from inspire_etf_validator.constants import (
+    INSPIRE_ETF_API_VERSION,
+    SERVICE_TEST_IDS,
+    METADATA_TEST_IDS,
+    USER_AGENT,
+    PDOK_EMAIL,
+    TID_SERVICE_MD_COMMON_REQUIREMENTS,
+)
 
 logger = logging.getLogger(__name__)
 
 
 class EtfValidatorClient:
-    headers = {
-        "User-Agent": USER_AGENT,
-        "From": PDOK_EMAIL
-    }
+    headers = {"User-Agent": USER_AGENT, "From": PDOK_EMAIL}
 
     def __init__(self, inspire_etf_endpoint, testfunction):
         self.inspire_etf_endpoint = inspire_etf_endpoint
@@ -50,8 +53,6 @@ class EtfValidatorClient:
             "testObject": {"resources": {"data": metadata_url}},
         }
         return self.__start_test(body)
-
-
 
     def __start_test(self, body):
         endpoint = self.__endpoint("TestRuns")

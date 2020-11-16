@@ -2,7 +2,10 @@ import pkg_resources
 
 from enum import Enum
 
-USER_AGENT = "PDOK Inspire ETF validator " + pkg_resources.require("inspire-etf-validator")[0].version
+USER_AGENT = (
+    "PDOK Inspire ETF validator "
+    + pkg_resources.require("inspire-etf-validator")[0].version
+)
 PDOK_EMAIL = "PDOK@kadaster.nl"
 
 INSPIRE_ETF_ENDPOINT = "http://localhost:8080/validator"
@@ -17,9 +20,15 @@ SERVICE_TEST_IDS = {
 }
 # Test ids
 TID_SERVICE_MD_COMMON_REQUIREMENTS = "EID59692c11-df86-49ad-be7f-94a1e1ddd8da"
-TID_CLASS_4_INSPIRE_NETWORK_SERVICES_METADATA = "EID606587df-65a8-4b7b-9eee-e0d94daaa42a"
-TID_CLASS_5_INSPIRE_INVOCABLE_SPATIAL_DATA_SERVICES_METADATA = "EID8db54d8a-8578-4959-b891-5394d9f53a28"
-TID_CLASS_6_INSPIRE_INTEROPERABLE_SPATIAL_DATA_SERVICES_METADATA = "EID7514777a-6cb8-499c-acd5-912496dc84e9"
+TID_CLASS_4_INSPIRE_NETWORK_SERVICES_METADATA = (
+    "EID606587df-65a8-4b7b-9eee-e0d94daaa42a"
+)
+TID_CLASS_5_INSPIRE_INVOCABLE_SPATIAL_DATA_SERVICES_METADATA = (
+    "EID8db54d8a-8578-4959-b891-5394d9f53a28"
+)
+TID_CLASS_6_INSPIRE_INTEROPERABLE_SPATIAL_DATA_SERVICES_METADATA = (
+    "EID7514777a-6cb8-499c-acd5-912496dc84e9"
+)
 
 # Service Categories
 SC_NS_AS_IS = "NS-asis"
