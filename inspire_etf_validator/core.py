@@ -16,7 +16,7 @@ def main(result_path, enable_caching, inspire_etf_endpoint):
 
     all_ngr_entries = get_all_ngr_records(enable_caching)
 
-    ngr_entries = get_filtered_ngr_entries(all_ngr_entries, ["ATOM", "WFS", "WMS"])
+    ngr_entries = get_filtered_ngr_entries(all_ngr_entries, ["ATOM", "WFS", "WMS", "WMTS", "WCS"])
 
     result, master_result_path = run_master_sync.run_master(
         result_path, ngr_entries, inspire_etf_endpoint

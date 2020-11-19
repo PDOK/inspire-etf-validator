@@ -17,6 +17,8 @@ SERVICE_TEST_IDS = {
     "atom": "EID11571c92-3940-4f42-a6cd-5e2b1c6f4d93",
     "wms": "EIDeec9d674-d94b-4d8d-b744-1309c6cae1d2",
     "wfs": "EID174edf55-699b-446c-968c-1892a4d8d5bd",
+    "wcs": "EID074570ad-d720-47b3-af79-d54201793404",
+    "wmts": "EID550ceacf-b3cb-47a0-b2dd-d3edb18344a9",
 }
 # Test ids
 TID_SERVICE_MD_COMMON_REQUIREMENTS = "EID59692c11-df86-49ad-be7f-94a1e1ddd8da"
