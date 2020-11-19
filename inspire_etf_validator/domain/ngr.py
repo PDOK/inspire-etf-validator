@@ -161,7 +161,7 @@ def __get_record_info(uuid):
     result["getRecordByIdUrl"] = record_info_base_url
     result["inspireTheme"] = inspire_theme
     result["serviceCategory"] = service_category
-
+    result["service_metadata_uuid"] = uuid
     return result
 
 

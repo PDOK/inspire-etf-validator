@@ -136,5 +136,7 @@ def __run_detail(
     )
     result["test_endpoint"] = test_endpoint
     result["test_label"] = label
+    result["service_name"] = endpoint_info["title"]
     result["test_service_type"] = service_type
+    result["service_category"] = endpoint_info["serviceCategory"]
     return result, test_result

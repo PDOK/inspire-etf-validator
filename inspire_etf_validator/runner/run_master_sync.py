@@ -5,6 +5,8 @@ from inspire_etf_validator.constants import (
     LOG_LINE_SEPARATOR,
     INSPIRE_ETF_ENDPOINT,
     INSPIRE_ETF_API_VERSION,
+    SC_NS_AS_IS,
+    SC_NS_HARMONIZED,
 )
 from inspire_etf_validator.domain.etf_validator import EtfValidatorClient
 from inspire_etf_validator.domain.file_system import (
@@ -56,13 +58,21 @@ def run_master(result_path, ngr_entries, inspire_etf_endpoint):
 
     for index, ngr_entry in enumerate(ngr_entries):
         logger.info(f"Running tests for item {index+1} of {number_of_endpoints}")
-        result_detail, test_result_detail = run_service_detail(
-            result_path, ngr_entry, start_time, inspire_etf_endpoint
-        )
-        result_detail_list.append(result_detail)
+        ## service validation
+        logger.info(f"Running service validation for item {index+1} of {number_of_endpoints}")
+        if ngr_entry["serviceCategory"] in [SC_NS_AS_IS, SC_NS_HARMONIZED]:
+            result_detail, test_result_detail = run_service_detail(
+                result_path, ngr_entry, start_time, inspire_etf_endpoint
+            )
+            result_detail["service_metadata_uuid"] = ngr_entry["service_metadata_uuid"]
+            result_detail_list.append(result_detail)
+        else:
+            logger.info(f"Skipping service validation for item {index + 1} of {number_of_endpoints}")
+        ## metadata validation
         result_detail, test_result_detail = run_metadata_detail(
             result_path, ngr_entry, start_time, inspire_etf_endpoint
         )
+        result_detail["service_metadata_uuid"] = ngr_entry["service_metadata_uuid"]
         result_detail_list.append(result_detail)
 
     end_time = time_now()
