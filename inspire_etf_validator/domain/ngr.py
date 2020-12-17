@@ -12,8 +12,7 @@ from inspire_etf_validator.constants import (
     CACHE_FILENAME,
     CACHE_EXPIRATION_IN_SECONDS,
     REQUEST_HEADERS,
-    SC_NS_AS_IS,
-    SC_NS_HARMONIZED,
+    SC_NETWORK_SERVICE,
     SC_SDS_INTEROPERABLE,
     SC_SDS_INVOCABLE,
 )
@@ -134,18 +133,11 @@ def __get_record_info(uuid):
         NAMESPACE_PREFIXES,
     ).text
     protocol = document.find(
-        ".//gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:protocol/gco"
-        ":CharacterString",
+        ".//gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:protocol/*",
         NAMESPACE_PREFIXES,
     )
     if protocol is not None:
         protocol = protocol.text
-    else:
-        protocol = document.find(
-            ".//gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:protocol/gmx"
-            ":Anchor",
-            NAMESPACE_PREFIXES,
-        ).text
     profile_version = document.find(
         ".//gmd:metadataStandardVersion/gco:CharacterString", NAMESPACE_PREFIXES
     ).text
@@ -153,9 +145,7 @@ def __get_record_info(uuid):
     inspire_theme, service_category = __get_service_category(document)
 
     result["pdokServiceType"] = __get_service_type(service_access_point)
-    result["serviceAccessPoint"] = __remove_parameters_from_request(
-        service_access_point
-    )
+    result["serviceAccessPoint"] = service_access_point
     result["metadataStandardVersion"] = profile_version
     result["protocol"] = protocol
     result["getRecordByIdUrl"] = record_info_base_url
@@ -179,10 +169,7 @@ def __get_service_category(document):
         NAMESPACE_PREFIXES,
     ).text
     if service_type in ["view", "download"]:
-        if inspire_theme is None:
-            service_category = SC_NS_AS_IS
-        else:
-            service_category = SC_NS_HARMONIZED
+        service_category = SC_NETWORK_SERVICE
     if service_type == "other":
         if (
             document.find(
@@ -201,12 +188,6 @@ def __get_service_category(document):
         ):
             service_category = SC_SDS_INVOCABLE
     return inspire_theme, service_category
-
-
-def __remove_parameters_from_request(url):
-    return url
-    # return url.split("?", 1)[0]
-
 
 def get_filtered_ngr_entries(ngr_records, pdok_service_types):
     records = []

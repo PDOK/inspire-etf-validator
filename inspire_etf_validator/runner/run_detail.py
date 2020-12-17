@@ -134,6 +134,7 @@ def __run_detail(
         if test_result is not None
         else "TEST_RUN_FAIL"
     )
+    result["validated_item"] = "service" if testfunction.__name__ == "start_service_test" else "metadata"
     result["test_endpoint"] = test_endpoint
     result["test_label"] = label
     result["service_name"] = endpoint_info["title"]

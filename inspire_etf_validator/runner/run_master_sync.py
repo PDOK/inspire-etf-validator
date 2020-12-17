@@ -5,8 +5,7 @@ from inspire_etf_validator.constants import (
     LOG_LINE_SEPARATOR,
     INSPIRE_ETF_ENDPOINT,
     INSPIRE_ETF_API_VERSION,
-    SC_NS_AS_IS,
-    SC_NS_HARMONIZED,
+    SC_NETWORK_SERVICE,
 )
 from inspire_etf_validator.domain.etf_validator import EtfValidatorClient
 from inspire_etf_validator.domain.file_system import (
@@ -60,7 +59,7 @@ def run_master(result_path, ngr_entries, inspire_etf_endpoint):
         logger.info(f"Running tests for item {index+1} of {number_of_endpoints}")
         ## service validation
         logger.info(f"Running service validation for item {index+1} of {number_of_endpoints}")
-        if ngr_entry["serviceCategory"] in [SC_NS_AS_IS, SC_NS_HARMONIZED]:
+        if ngr_entry["serviceCategory"] in [SC_NETWORK_SERVICE]:
             result_detail, test_result_detail = run_service_detail(
                 result_path, ngr_entry, start_time, inspire_etf_endpoint
             )
