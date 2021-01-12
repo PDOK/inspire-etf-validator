@@ -1,7 +1,5 @@
 import pkg_resources
 
-from enum import Enum
-
 USER_AGENT = (
     "PDOK Inspire ETF validator "
     + pkg_resources.require("inspire-etf-validator")[0].version
