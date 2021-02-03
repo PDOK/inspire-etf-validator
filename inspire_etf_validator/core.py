@@ -12,11 +12,14 @@ from inspire_etf_validator.domain.ngr import (
 logger = logging.getLogger(__name__)
 
 
-def main(result_path, enable_caching, inspire_etf_endpoint):
+def main(result_path, enable_caching, inspire_etf_endpoint, debug_mode):
 
     all_ngr_entries = get_all_ngr_records(enable_caching)
 
     ngr_entries = get_filtered_ngr_entries(all_ngr_entries, ["ATOM", "WFS", "WMS", "WMTS", "WCS"])
+
+    if debug_mode:
+        ngr_entries = ngr_entries[:3]
 
     result, master_result_path = run_master_sync.run_master(
         result_path, ngr_entries, inspire_etf_endpoint

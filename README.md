@@ -24,6 +24,7 @@ Options:
 * `-r` or `--result_path` -> Path pointing to a directory used for the output -> default: `../`;
 * `-e` or `--inspire_etf_endpoint` -> URL of the Inspire ETF service used to validate -> default: `http://localhost:8080/validator`; 
 * `-c` or `--enable-caching` -> Enables cache for retrieving NGR inspire endpoints.
+* `-d` or `--debug-mode` -> Enables debug mode which will run tests for the first three endpoints.
 
 ## Development installation of this project itself
 
