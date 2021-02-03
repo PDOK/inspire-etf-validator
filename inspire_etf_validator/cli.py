@@ -39,7 +39,13 @@ def cli():
         exists=True, readable=True, writable=False, allow_dash=False,
     ),
 )
-@click.option("-c", "--enable-caching", is_flag=True, default=False)
+@click.option(
+    "-c",
+    "--enable-caching",
+    is_flag=True,
+    default=False,
+    help="Enables cache for retrieving NGR inspire endpoints"
+)
 @click_log.simple_verbosity_option(logger)
 @click.option(
     "-e",
@@ -48,17 +54,23 @@ def cli():
     default=INSPIRE_ETF_ENDPOINT,
     help="URL of the Inspire ETF service used to validate",
 )
-def inspire_etf_validator_command(result_path, enable_caching, inspire_etf_endpoint):
+@click.option(
+    "-d",
+    "--debug-mode",
+    is_flag=True,
+    default=False,
+    help="Enables debug mode which will run tests for the first three endpoints"
+)
+def inspire_etf_validator_command(result_path, enable_caching, inspire_etf_endpoint, debug_mode):
     """
-    Main function of script.
-    Retrieves all NGR inspire endpoints managed by PDOK.
+    This command is the main function of this tool.
+    It retrieves all NGR inspire endpoints managed by PDOK.
     Then it runs the test suites in the Inspire ETF validator.
-    Currently we only run the test suites for wms, wfs, and atom endpoints.
     """
     set_level()
 
     try:
-        main(result_path, enable_caching, inspire_etf_endpoint)
+        main(result_path, enable_caching, inspire_etf_endpoint, debug_mode)
     except AppError:
         logger.exception("inspire_etf_validator failed:")
         sys.exit(1)
