@@ -10,7 +10,47 @@ from inspire_etf_validator.util.time_util import to_datetime, to_duration, time_
 logger = logging.getLogger(__name__)
 
 
-def run_detail(result_path, endpoint_info, start_time_master, inspire_etf_endpoint):
+def run_service_detail(
+    result_path, endpoint_info, start_time_master, inspire_etf_endpoint
+):
+    test_type = endpoint_info["pdokServiceType"].lower()
+    test_endpoint = endpoint_info["serviceAccessPoint"]
+    return __run_detail(
+        result_path,
+        endpoint_info,
+        start_time_master,
+        inspire_etf_endpoint,
+        EtfValidatorClient.start_service_test,
+        test_endpoint,
+        test_type,
+    )
+
+
+def run_metadata_detail(
+    result_path, endpoint_info, start_time_master, inspire_etf_endpoint
+):
+    test_endpoint = endpoint_info["getRecordByIdUrl"].strip()
+    test_type = endpoint_info["serviceCategory"]
+    return __run_detail(
+        result_path,
+        endpoint_info,
+        start_time_master,
+        inspire_etf_endpoint,
+        EtfValidatorClient.start_service_md_test,
+        test_endpoint,
+        test_type,
+    )
+
+
+def __run_detail(
+    result_path,
+    endpoint_info,
+    start_time_master,
+    inspire_etf_endpoint,
+    testfunction,
+    test_endpoint,
+    test_type,
+):
 
     result = {
         "start_time": None,
@@ -18,11 +58,10 @@ def run_detail(result_path, endpoint_info, start_time_master, inspire_etf_endpoi
         "error": None,
     }
 
-    client = EtfValidatorClient(inspire_etf_endpoint)
+    client = EtfValidatorClient(inspire_etf_endpoint, testfunction)
 
     start_time = time_now()
     service_type = endpoint_info["pdokServiceType"].lower()
-    endpoint = endpoint_info["serviceAccessPoint"]
     label = endpoint_info["label"]
     file_name = "".join(e for e in endpoint_info["label"] if e.isalnum())
     test_id = None
@@ -33,11 +72,11 @@ def run_detail(result_path, endpoint_info, start_time_master, inspire_etf_endpoi
     logger.info("Started test")
     logger.info("Start time: %s", to_datetime(start_time))
     logger.info("Test label: %s", label)
-    logger.info("Test endpoint: %s", endpoint)
+    logger.info("Test endpoint: %s", test_endpoint)
     logger.info(LOG_LINE_SEPARATOR)
 
     try:
-        test_result = client.start_test(label, service_type, endpoint)
+        test_result = client.testfunction(client, label, test_type, test_endpoint)
         test_id = client.get_testrun_id(test_result)
 
         logger.info("Test id: %s", test_id)
@@ -95,7 +134,10 @@ def run_detail(result_path, endpoint_info, start_time_master, inspire_etf_endpoi
         if test_result is not None
         else "TEST_RUN_FAIL"
     )
-    result["test_endpoint"] = endpoint
+    result["validated_item"] = "service" if testfunction.__name__ == "start_service_test" else "metadata"
+    result["test_endpoint"] = test_endpoint
     result["test_label"] = label
+    result["service_name"] = endpoint_info["title"]
     result["test_service_type"] = service_type
+    result["service_category"] = endpoint_info["serviceCategory"]
     return result, test_result
