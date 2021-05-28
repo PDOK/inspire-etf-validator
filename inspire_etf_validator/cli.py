@@ -7,7 +7,7 @@ import click
 import click_log
 
 # Setup logging before package imports.
-from inspire_etf_validator.constants import INSPIRE_ETF_ENDPOINT
+from inspire_etf_validator.constants import INSPIRE_ETF_ENDPOINT, MAX_RETRY
 from inspire_etf_validator.error import AppError
 
 logger = logging.getLogger(__name__)
@@ -61,7 +61,15 @@ def cli():
     default=False,
     help="Enables debug mode which will run tests for the first three endpoints"
 )
-def inspire_etf_validator_command(result_path, enable_caching, inspire_etf_endpoint, debug_mode):
+@click.option(
+    "-t",
+    "--max_retry",
+    required=False,
+    type=click.types.INT,
+    default=MAX_RETRY,
+    help="Maximum amount of retries",
+)
+def inspire_etf_validator_command(result_path, enable_caching, inspire_etf_endpoint, debug_mode, max_retry):
     """
     This command is the main function of this tool.
     It retrieves all NGR inspire endpoints managed by PDOK.
@@ -70,7 +78,7 @@ def inspire_etf_validator_command(result_path, enable_caching, inspire_etf_endpo
     set_level()
 
     try:
-        main(result_path, enable_caching, inspire_etf_endpoint, debug_mode)
+        main(result_path, enable_caching, inspire_etf_endpoint, debug_mode, max_retry)
     except AppError:
         logger.exception("inspire_etf_validator failed:")
         sys.exit(1)

@@ -1,6 +1,7 @@
 import json
 import logging
 import re
+import time
 
 import requests
 from urllib.parse import urljoin
@@ -11,7 +12,7 @@ from inspire_etf_validator.constants import (
     METADATA_TEST_IDS,
     USER_AGENT,
     PDOK_EMAIL,
-    TID_SERVICE_MD_COMMON_REQUIREMENTS,
+    SLEEP_TIME_IN_SECONDS,
 )
 
 logger = logging.getLogger(__name__)
@@ -20,9 +21,10 @@ logger = logging.getLogger(__name__)
 class EtfValidatorClient:
     headers = {"User-Agent": USER_AGENT, "From": PDOK_EMAIL}
 
-    def __init__(self, inspire_etf_endpoint, testfunction):
+    def __init__(self, inspire_etf_endpoint, testfunction, max_retry):
         self.inspire_etf_endpoint = inspire_etf_endpoint
         self.testfunction = testfunction
+        self.max_retry = max_retry
 
     def __endpoint(self, path):
         endpoint = self.inspire_etf_endpoint
@@ -54,15 +56,34 @@ class EtfValidatorClient:
         }
         return self.__start_test(body)
 
+    FILTER_RESOURCE_EXCEPTION = "The system has currently insufficient resources to process this request"
+    sleep_time = SLEEP_TIME_IN_SECONDS
+    retry_count = 0
+
     def __start_test(self, body):
         endpoint = self.__endpoint("TestRuns")
 
         response = requests.post(endpoint, json=body, headers=self.headers)
 
         if response.status_code != 201:
-            raise EtfValidatorClientException(
-                f"Something went wrong starting the test, we got HTTP status {response.status_code}:\n {response.content}"
-            )
+
+            if self.FILTER_RESOURCE_EXCEPTION in str(response.content):
+                if self.retry_count > self.max_retry:
+                    raise EtfValidatorClientException(
+                        f"ETF validator does not have sufficient resources, tried {self.retry_count} times, we got HTTP status {response.status_code}:\n {response.content}"
+                    )
+
+                print(f"Test start failed, retry in {self.sleep_time} seconds")
+                time.sleep(self.sleep_time)
+
+                self.sleep_time = self.sleep_time * 2
+                self.retry_count += 1
+
+                return self.__start_test(body)
+            else:
+                raise EtfValidatorClientException(
+                    f"Something went wrong starting the test, we got HTTP status {response.status_code}:\n {response.content}"
+                )
 
         result = json.loads(response.content)
 

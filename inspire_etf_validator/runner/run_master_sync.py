@@ -22,7 +22,7 @@ from inspire_etf_validator.util.time_util import time_now, to_datetime, to_durat
 logger = logging.getLogger(__name__)
 
 
-def run_master(result_path, ngr_entries, inspire_etf_endpoint):
+def run_master(result_path, ngr_entries, inspire_etf_endpoint, max_retry):
     start_time = time_now()
 
     result_master = {
@@ -61,7 +61,7 @@ def run_master(result_path, ngr_entries, inspire_etf_endpoint):
         logger.info(f"Running service validation for item {index+1} of {number_of_endpoints}")
         if ngr_entry["serviceCategory"] in [SC_NETWORK_SERVICE]:
             result_detail, test_result_detail = run_service_detail(
-                result_path, ngr_entry, start_time, inspire_etf_endpoint
+                result_path, ngr_entry, start_time, inspire_etf_endpoint, max_retry
             )
             result_detail["service_metadata_uuid"] = ngr_entry["service_metadata_uuid"]
             result_detail_list.append(result_detail)
@@ -69,7 +69,7 @@ def run_master(result_path, ngr_entries, inspire_etf_endpoint):
             logger.info(f"Skipping service validation for item {index + 1} of {number_of_endpoints}")
         ## metadata validation
         result_detail, test_result_detail = run_metadata_detail(
-            result_path, ngr_entry, start_time, inspire_etf_endpoint
+            result_path, ngr_entry, start_time, inspire_etf_endpoint, max_retry
         )
         result_detail["service_metadata_uuid"] = ngr_entry["service_metadata_uuid"]
         result_detail_list.append(result_detail)
