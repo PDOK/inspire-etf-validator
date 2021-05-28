@@ -12,7 +12,7 @@ from inspire_etf_validator.domain.ngr import (
 logger = logging.getLogger(__name__)
 
 
-def main(result_path, enable_caching, inspire_etf_endpoint, debug_mode):
+def main(result_path, enable_caching, inspire_etf_endpoint, debug_mode, max_retry):
 
     all_ngr_entries = get_all_ngr_records(enable_caching)
 
@@ -22,7 +22,7 @@ def main(result_path, enable_caching, inspire_etf_endpoint, debug_mode):
         ngr_entries = ngr_entries[:3]
 
     result, master_result_path = run_master_sync.run_master(
-        result_path, ngr_entries, inspire_etf_endpoint
+        result_path, ngr_entries, inspire_etf_endpoint, max_retry
     )
     aggregate_list = aggregate_master(result)
 

@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 def run_service_detail(
-    result_path, endpoint_info, start_time_master, inspire_etf_endpoint
+    result_path, endpoint_info, start_time_master, inspire_etf_endpoint, max_retry
 ):
     test_type = endpoint_info["pdokServiceType"].lower()
     test_endpoint = endpoint_info["serviceAccessPoint"]
@@ -23,11 +23,12 @@ def run_service_detail(
         EtfValidatorClient.start_service_test,
         test_endpoint,
         test_type,
+        max_retry
     )
 
 
 def run_metadata_detail(
-    result_path, endpoint_info, start_time_master, inspire_etf_endpoint
+    result_path, endpoint_info, start_time_master, inspire_etf_endpoint, max_retry
 ):
     test_endpoint = endpoint_info["getRecordByIdUrl"].strip()
     test_type = endpoint_info["serviceCategory"]
@@ -39,6 +40,7 @@ def run_metadata_detail(
         EtfValidatorClient.start_service_md_test,
         test_endpoint,
         test_type,
+        max_retry
     )
 
 
@@ -50,6 +52,7 @@ def __run_detail(
     testfunction,
     test_endpoint,
     test_type,
+    max_retry
 ):
 
     result = {
@@ -58,12 +61,13 @@ def __run_detail(
         "error": None,
     }
 
-    client = EtfValidatorClient(inspire_etf_endpoint, testfunction)
+    client = EtfValidatorClient(inspire_etf_endpoint, testfunction, max_retry)
 
     start_time = time_now()
     service_type = endpoint_info["pdokServiceType"].lower()
     label = endpoint_info["label"]
-    file_name = "".join(e for e in endpoint_info["label"] if e.isalnum())
+    # file_name = "".join(e for e in endpoint_info["label"] if e.isalnum())
+    file_name = "".join(e for e in test_type if e.isalnum())
     test_id = None
     test_result = None
 

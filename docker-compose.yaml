@@ -1,7 +1,7 @@
 version: '2.4'
 services:
   inspire-validator:
-    image: docker.pkg.github.com/inspire-eu-validation/community/inspire-validator:2020.3
+    image: docker.io/pdok/inspire-validator:2021.1
     ports:
       - 8080:8080
     healthcheck:
