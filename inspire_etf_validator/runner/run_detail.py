@@ -66,7 +66,7 @@ def __run_detail(
     start_time = time_now()
     service_type = endpoint_info["pdokServiceType"].lower()
     label = endpoint_info["label"]
-    file_name = test_type + "_" + "".join(e for e in endpoint_info["label"] if e.isalnum())[:60]
+    file_name = (test_type if test_type is not None else "notype") + "_" + "".join(e for e in endpoint_info["label"] if e.isalnum())[:60]
     test_id = None
     test_result = None
 
