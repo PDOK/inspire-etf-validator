@@ -61,12 +61,13 @@ def __run_detail(
         "error": None,
     }
 
+    #todo: test_type is srt to either wms,wfs atom or "netwrok service" which is strange -> research this behavior
+
     client = EtfValidatorClient(inspire_etf_endpoint, testfunction, max_retry)
 
     start_time = time_now()
     service_type = endpoint_info["pdokServiceType"].lower()
     label = endpoint_info["label"]
-    file_name = (test_type if test_type is not None else "notype") + "_" + "".join(e for e in endpoint_info["label"] if e.isalnum())[:60]
     test_id = None
     test_result = None
 
@@ -88,7 +89,7 @@ def __run_detail(
 
         log = client.get_log(test_id)
         write_test_detail_file(
-            result_path, start_time_master, test_id, "test_log", file_name, "log", log
+            result_path, start_time_master, test_id, "test_log", None, "log", log
         )
 
         test_result = client.get_result(test_id)
@@ -97,7 +98,7 @@ def __run_detail(
             start_time_master,
             test_id,
             "test_result",
-            file_name,
+            None,
             "json",
             test_result,
         )
@@ -108,12 +109,12 @@ def __run_detail(
             start_time_master,
             test_id,
             "test_report",
-            file_name,
+            None,
             "html",
             test_html_report,
         )
 
-    # todo: Analyse results over time and filter out specific Exceptions
+    # Analyse results over time and filter out specific Exceptions
     except Exception:
         error = str(sys.exc_info())
         result["error"] = error
