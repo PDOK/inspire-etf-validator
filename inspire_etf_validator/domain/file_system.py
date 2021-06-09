@@ -20,7 +20,9 @@ def write_test_detail_file(
     content,
 ):
     write_mode = "w"
-    filename = f"{test_file_description}_{label_file_name}.{extension}"
+    separator = "_"
+    label_file_name = separator + label_file_name if label_file_name else ""
+    filename = f"{test_file_description}{label_file_name}.{extension}"
     filepath = join(
         get_master_result_path(result_path, run_on), DETAIL_OUTPUT_PATH, test_id
     )
