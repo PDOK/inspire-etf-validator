@@ -6,20 +6,25 @@ from inspire_etf_validator.report.aggregate import aggregate_master, filter_stat
 from inspire_etf_validator.runner import run_master_sync
 from inspire_etf_validator.domain.ngr import (
     get_all_ngr_records,
-    get_filtered_ngr_entries,
+    get_filtered_ngr_entries, get_entry_by_endpoint,
 )
 
 logger = logging.getLogger(__name__)
 
 
-def main(result_path, enable_caching, inspire_etf_endpoint, debug_mode, max_retry):
+def main(result_path, enable_caching, inspire_etf_endpoint, debug_mode, max_retry, single_endpoint):
 
-    all_ngr_entries = get_all_ngr_records(enable_caching)
+    all_ngr_entries = get_all_ngr_records(result_path, enable_caching)
 
     ngr_entries = get_filtered_ngr_entries(all_ngr_entries, ["ATOM", "WFS", "WMS", "WMTS", "WCS"])
 
     if debug_mode:
         ngr_entries = ngr_entries[:3]
+
+    if single_endpoint is not None:
+        ngr_entries = get_entry_by_endpoint(all_ngr_entries, single_endpoint)
+        if ngr_entries is None:
+            logger.error(f"Endpoint {single_endpoint} not found in NGR records")
 
     result, master_result_path = run_master_sync.run_master(
         result_path, ngr_entries, inspire_etf_endpoint, max_retry

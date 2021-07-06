@@ -21,29 +21,32 @@ logger = logging.getLogger(__name__)
 
 
 # todo: dataset id toevoegen aan record -> zodat we op basis van dataset kunnen groeperen
-def get_all_ngr_records(enable_caching):
+def get_all_ngr_records(result_path, enable_caching):
+
+    cache_file = os.path.join(result_path, CACHE_FILENAME)
+
     # if there is no cache file or it is expired, create it. otherwise read the cache file
-    if not os.path.isfile(CACHE_FILENAME) or __cache_is_expired():
+    if not os.path.isfile(cache_file) or __cache_is_expired(cache_file):
         logger.info("downloading ngr record data...")
         ngr_records = __get_all_ngr_records()
         for ngr_record in ngr_records:
             ngr_record.update(__get_record_info(ngr_record["uuid"]))
 
         if enable_caching:
-            logger.info("writing all ngr record data to cache file " + CACHE_FILENAME)
-            with open(CACHE_FILENAME, "w", encoding="utf-8") as f:
+            logger.info("writing all ngr record data to cache file " + cache_file)
+            with open(cache_file, "w", encoding="utf-8") as f:
                 json.dump(ngr_records, f, ensure_ascii=False, indent=4)
     else:
-        logger.info("reading ngr records from cache file " + CACHE_FILENAME)
-        with open(CACHE_FILENAME) as infile:
+        logger.info("reading ngr records from cache file " + cache_file)
+        with open(cache_file) as infile:
             ngr_records = json.load(infile)
 
     return ngr_records
 
 
-def __cache_is_expired():
+def __cache_is_expired(cache_file):
     file_mod_time = datetime.fromtimestamp(
-        os.stat(CACHE_FILENAME).st_mtime
+        os.stat(cache_file).st_mtime
     )  # This is a datetime.datetime object!
     now = datetime.today()
     max_delay = timedelta(seconds=CACHE_EXPIRATION_IN_SECONDS)
@@ -195,3 +198,10 @@ def get_filtered_ngr_entries(ngr_records, pdok_service_types):
         if ngr_record["pdokServiceType"] in pdok_service_types:
             records.append(ngr_record)
     return records
+
+def get_entry_by_endpoint(ngr_records, endpoint):
+    for ngr_record in ngr_records:
+        if ngr_record["serviceAccessPoint"].lower() == endpoint.lower():
+            return [ngr_record]
+
+    return None

@@ -35,7 +35,7 @@ METADATA_TEST_IDS = {
 
 URL_NGR = "https://nationaalgeoregister.nl/geonetwork"
 
-CACHE_FILENAME = "../ngr_records_cache.json"
+CACHE_FILENAME = "ngr_records_cache.json"
 DETAIL_OUTPUT_PATH = "run_detail_result"
 RUN_MASTER_RESULT_PATH = "run_master_result.json"
 
