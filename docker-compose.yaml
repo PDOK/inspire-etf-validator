@@ -8,12 +8,15 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:8080/validator"]
   inspire-etf-validator:
     build: .
-    entrypoint:
-      - etf
-      - -r
-      - /results
-      - -e
-      - http://inspire-validator:8080/validator
+    entrypoint: /bin/bash
+    tty: true
+    container_name: iev
+#    entrypoint:
+#      - etf
+#      - -r
+#      - /results
+#      - -e
+#      - http://inspire-validator:8080/validator
     volumes:
       - ./results:/results
     depends_on:

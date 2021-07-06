@@ -61,8 +61,6 @@ def __run_detail(
         "error": None,
     }
 
-    #todo: test_type is srt to either wms,wfs atom or "netwrok service" which is strange -> research this behavior
-
     client = EtfValidatorClient(inspire_etf_endpoint, testfunction, max_retry)
 
     start_time = time_now()

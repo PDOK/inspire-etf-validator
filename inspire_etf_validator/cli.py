@@ -31,7 +31,7 @@ def cli():
 @cli.command(name="inspire_etf_validator")
 @click.option(
     "-r",
-    "--result_path",
+    "--result-path",
     required=False,
     default="../",
     help="Path pointing to a directory used for the output",
@@ -49,7 +49,7 @@ def cli():
 @click_log.simple_verbosity_option(logger)
 @click.option(
     "-e",
-    "--inspire_etf_endpoint",
+    "--inspire-etf-endpoint",
     required=False,
     default=INSPIRE_ETF_ENDPOINT,
     help="URL of the Inspire ETF service used to validate",
@@ -63,13 +63,20 @@ def cli():
 )
 @click.option(
     "-t",
-    "--max_retry",
+    "--max-retry",
     required=False,
     type=click.types.INT,
     default=MAX_RETRY,
     help="Maximum amount of retries",
 )
-def inspire_etf_validator_command(result_path, enable_caching, inspire_etf_endpoint, debug_mode, max_retry):
+@click.option(
+    "-s",
+    "--single-endpoint",
+    required=False,
+    default=None,
+    help="Provide endpoint of service in order to test just one endpoint",
+)
+def inspire_etf_validator_command(result_path, enable_caching, inspire_etf_endpoint, debug_mode, max_retry, single_endpoint):
     """
     This command is the main function of this tool.
     It retrieves all NGR inspire endpoints managed by PDOK.
@@ -78,7 +85,7 @@ def inspire_etf_validator_command(result_path, enable_caching, inspire_etf_endpo
     set_level()
 
     try:
-        main(result_path, enable_caching, inspire_etf_endpoint, debug_mode, max_retry)
+        main(result_path, enable_caching, inspire_etf_endpoint, debug_mode, max_retry, single_endpoint)
     except AppError:
         logger.exception("inspire_etf_validator failed:")
         sys.exit(1)
@@ -87,7 +94,7 @@ def inspire_etf_validator_command(result_path, enable_caching, inspire_etf_endpo
 @cli.command(name="report")
 @click.option(
     "-r",
-    "--result_path",
+    "--result-path",
     required=False,
     default="../",
     help="Path pointing to a directory used for the output",
