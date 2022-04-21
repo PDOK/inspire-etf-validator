@@ -15,6 +15,7 @@ from inspire_etf_validator.constants import (
     SC_NETWORK_SERVICE,
     SC_SDS_INTEROPERABLE,
     SC_SDS_INVOCABLE,
+    SC_SDS_HARMONISED,
 )
 
 logger = logging.getLogger(__name__)
@@ -190,6 +191,14 @@ def __get_service_category(document):
             is not None
         ):
             service_category = SC_SDS_INVOCABLE
+        if (
+            document.find(
+                ".//gmd:report/gmd:DQ_DomainConsistency/gmd:result/gmd:DQ_ConformanceResult/gmd:specification/gmd:CI_Citation/gmd:title/gmx:Anchor[@xlink:href='http://inspire.ec.europa.eu/id/ats/metadata/2.0/sds-harmonised']",
+                NAMESPACE_PREFIXES,
+            )
+            is not None
+        ):
+            service_category = SC_SDS_HARMONISED
     return inspire_theme, service_category
 
 def get_filtered_ngr_entries(ngr_records, pdok_service_types):

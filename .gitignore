@@ -40,4 +40,4 @@ docker-compose.override.yml
 *.json
 
 /result/
-/2020_11_16_00_48_40/
+/results/
