@@ -13,7 +13,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install dev dependencies
 RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-recommends \
         gcc \
-        python3-dev && \
+        python3.8-dev && \
         apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --upgrade --no-cache-dir setuptools pip
