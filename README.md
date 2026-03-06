@@ -1,3 +1,7 @@
+# ARCHIVED NOTICE
+
+This project has been archived since it is no longer maintained by PDOK. 
+
 # inspire-etf-validator
 Python script to run Inspire ETF validation for every PDOK Inspire endpoint in NGR.
 
